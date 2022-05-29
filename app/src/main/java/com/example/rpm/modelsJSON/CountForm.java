@@ -4,17 +4,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class CountForm {
 
-    @SerializedName("title")
-    public String title;
+    @SerializedName("name")
+    public String name;
 
-    @SerializedName("countBudget")
-    public String countBudget;
+    @SerializedName("price")
+    public int price;
 
-    @SerializedName("countDogovor")
-    public String countDogovor;
+    @SerializedName("in_stock")
+    public int inStock;
 
     @Override
     public String toString() {
-        return(title + ' ' + countBudget + ' ' + countDogovor);
+        return "CountForm{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", inStock=" + inStock +
+                '}';
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/change_foodPodC_name"
+        android:title="Изменить название" />
+    <item
+        android:id="@+id/delete_FoodPodC"
+        android:title="Удалить вид блюда" />
+    <item
+        android:id="@+id/add_new_food"
+        android:title="Добавить блюдо" />
+</menu>

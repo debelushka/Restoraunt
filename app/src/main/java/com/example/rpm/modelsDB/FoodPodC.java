@@ -9,23 +9,19 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = @ForeignKey(
-        entity = Faculty.class,
+        entity = Restaurant.class,
         parentColumns = "id",
-        childColumns = "facultyId", onDelete = CASCADE))
-public class Direction {
+        childColumns = "categoriesId", onDelete = CASCADE))
+public class FoodPodC {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
     @ColumnInfo(name = "name")
     public String name;
 
-    @ColumnInfo(name = "code")
-    public String code;
 
-    @ColumnInfo(name = "profile")
-    public String profile;
 
-    public int facultyId;
+    public int categoriesId;
 
     @Ignore public boolean newObj;
     @Ignore public boolean changed;

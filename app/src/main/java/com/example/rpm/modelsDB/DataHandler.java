@@ -7,53 +7,53 @@ import java.util.List;
 public class DataHandler {
 
     private AppDatabase db;
-    private FacultyDao facultyDao;
-    private DirectionDao directionDao;
-    private StudentsDao studentsDao;
+    private RestaurantDao facultyDao;
+    private FoodPodCDao foodPodCDao;
+    private FoodDao foodDao;
 
     public void createOrConnectToDB(Context context){
         db = AppDatabase.getInstance(context);
 
-        facultyDao = db.facultyDao();
-        directionDao = db.directionDao();
-        studentsDao = db.studentDao();
+        facultyDao = db.restaurantDao();
+        foodPodCDao = db.foodPodCDao();
+        foodDao = db.foodDao();
     }
     public AppDatabase getDB(){
         return db;
     }
 
 
-    //Faculty
+    //Cate
     public void addFaculty(String name){
-        Faculty faculty = new Faculty();
-        faculty.name = name;
+        Restaurant restaurant = new Restaurant();
+        restaurant.name = name;
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                facultyDao.insertAll(faculty);
+                facultyDao.insertAll(restaurant);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
     public void addFaculty(int id, String name){
-        Faculty faculty = new Faculty();
-        faculty.id = id;
-        faculty.name = name;
+        Restaurant restaurant = new Restaurant();
+        restaurant.id = id;
+        restaurant.name = name;
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                facultyDao.insertAll(faculty);
+                facultyDao.insertAll(restaurant);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void deleteFaculty(Faculty faculty){
+    public void deleteFaculty(Restaurant restaurant){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                facultyDao.delete(faculty);
+                facultyDao.delete(restaurant);
             }
         };
         Thread thread = new Thread(runnable);
@@ -63,19 +63,19 @@ public class DataHandler {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Faculty faculty = facultyDao.getOneById(id);
-                faculty.name = newName;
-                facultyDao.update(faculty);
+                Restaurant restaurant = facultyDao.getOneById(id);
+                restaurant.name = newName;
+                facultyDao.update(restaurant);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public  void updateFaculty(Faculty faculty){
+    public  void updateFaculty(Restaurant restaurant){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                facultyDao.update(faculty);
+                facultyDao.update(restaurant);
             }
         };
         Thread thread = new Thread(runnable);
@@ -83,42 +83,42 @@ public class DataHandler {
     }
 
 
-    //Direction
+    //FoodPodC
 
-    public void addDirection(Direction direction){
+    public void addDirection(FoodPodC foodPodC){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                directionDao.insertAll(direction);
+                foodPodCDao.insertAll(foodPodC);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
     public void addDirection(int id, String name, int facultyId){
-        Direction dir = new Direction();
+        FoodPodC dir = new FoodPodC();
         dir.id = id;
         dir.name = name;
-        dir.facultyId = facultyId;
+        dir.categoriesId = facultyId;
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                directionDao.insertAll(dir);
+                foodPodCDao.insertAll(dir);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
     public void addDirection(String name, int facultyId){
-        Direction dir = new Direction();
+        FoodPodC dir = new FoodPodC();
         dir.name = name;
-        dir.facultyId = facultyId;
+        dir.categoriesId = facultyId;
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                List<Direction> direcs = directionDao.getAll();
+                List<FoodPodC> direcs = foodPodCDao.getAll();
                 dir.id = direcs.size();
-                directionDao.insertAll(dir);
+                foodPodCDao.insertAll(dir);
             }
         };
         Thread thread = new Thread(runnable);
@@ -128,8 +128,8 @@ public class DataHandler {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Direction dir = directionDao.getOneById(id);
-                directionDao.delete(dir);
+                FoodPodC dir = foodPodCDao.getOneById(id);
+                foodPodCDao.delete(dir);
             }
         };
         Thread thread = new Thread(runnable);
@@ -139,9 +139,9 @@ public class DataHandler {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                Direction dir = directionDao.getOneById(id);
+                FoodPodC dir = foodPodCDao.getOneById(id);
                 dir.name = newName;
-                directionDao.update(dir);
+                foodPodCDao.update(dir);
             }
         };
         Thread thread = new Thread(runnable);
@@ -149,32 +149,32 @@ public class DataHandler {
     }
 
 
-    //Student
-    public void addStudent(Students students){
+    //Food
+    public void addFood(Food food){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                studentsDao.insertAll(students);
+                foodDao.insertAll(food);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void updateStudent(Students students){
+    public void updateFood(Food food){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                studentsDao.update(students);
+                foodDao.update(food);
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void deleteStudent(Students students){
+    public void deleteFood(Food food){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                studentsDao.delete(students);
+                foodDao.delete(food);
             }
         };
         Thread thread = new Thread(runnable);

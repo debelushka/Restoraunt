@@ -25,9 +25,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.rpm.controllers.ApiService;
 import com.example.rpm.modelsDB.DataHandler;
-import com.example.rpm.modelsDB.Direction;
-import com.example.rpm.modelsDB.Students;
-import com.example.rpm.modelsDB.Faculty;
+import com.example.rpm.modelsDB.FoodPodC;
+import com.example.rpm.modelsDB.Food;
+import com.example.rpm.modelsDB.Restaurant;
 import com.example.rpm.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationView;
 
@@ -39,16 +39,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActivityMainBinding binding;
 
     private NavigationView navigationView;
-    private ListView directionsList;
+    private ListView FoddPath;
     private Menu mainMenu;
 
     private DataHandler dataHandler = new DataHandler();
     private int currentFacultyId;
 
-    private ArrayList<Faculty> allFaculties;
-    private ArrayList<Direction> allDirections;
-    private ArrayList<Direction> currentFacultyDirections;
-    private ArrayList<Students> allStudents;
+    private ArrayList<Restaurant> allRestaurant;
+    private ArrayList<FoodPodC> allFoodPodCS;
+    private ArrayList<FoodPodC> currentFacultyFoodPodCS;
+    private ArrayList<Food> allFood;
     private ApiService apiService = new ApiService();
 
     //Initializing
@@ -70,17 +70,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initializeValues(){
         currentFacultyId = -1;
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        directionsList = (ListView) findViewById(R.id.directionsListView);
-        directionsList.setOnItemClickListener((parent, view, position, id)->{
-            Intent intent = new Intent(MainActivity.this, StudentsListActivity.class);
-            int dirId = currentFacultyDirections.get(position).id;
-            String title = currentFacultyDirections.get(position).name;
-            String code = currentFacultyDirections.get(position).code;
-            String profile = currentFacultyDirections.get(position).profile;
-            intent.putExtra("directionId", dirId);
+        FoddPath = (ListView) findViewById(R.id.directionsListView);
+        FoddPath.setOnItemClickListener((parent, view, position, id)->{
+            Intent intent = new Intent(MainActivity.this, FoodListActivity.class);
+            int dirId = currentFacultyFoodPodCS.get(position).id;
+            String title = currentFacultyFoodPodCS.get(position).name;
+
+            intent.putExtra("categoriesId", dirId);
             intent.putExtra("title", title);
-            intent.putExtra("code", code);
-            intent.putExtra("profile", profile);
             startActivity(intent);
         });
 
@@ -89,14 +86,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setListViewAdapter(){
         ArrayList<String> str = new ArrayList<>();
-        for(Direction direction : currentFacultyDirections){
+        for(FoodPodC foodPodC : currentFacultyFoodPodCS){
             int amount = 0;
-            for(Students student: allStudents){
-                if(student.departmentId == direction.id) amount++;
+            for(Food food: allFood){
+                if(food.podCid == foodPodC.id) amount++;
             }
-            str.add(direction.code + ' ' + direction.name + ' ' + direction.profile + " (Студентов: " + amount + ")");
+            str.add(foodPodC.name);
         }
-        directionsList.setAdapter(
+        FoddPath.setAdapter(
                 new ArrayAdapter<String>(this,
                         android.R.layout.simple_list_item_1,
                         str)
@@ -104,12 +101,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getDatabaseInfo(){
-        GetFaculties getFaculties = new GetFaculties();
-        getFaculties.execute();
-        GetDirections getDirections = new GetDirections();
-        getDirections.execute();
-        GetStudents getStudents = new GetStudents();
-        getStudents.execute();
+        GetRestaurant getRestaurant = new GetRestaurant();
+        getRestaurant.execute();
+        GetFoodP getFoodP = new GetFoodP();
+        getFoodP.execute();
+        GetFood getFood = new GetFood();
+        getFood.execute();
     }
 
     @Override public void onBackPressed() {
@@ -120,12 +117,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if(currentFacultyId != -1){
             currentFacultyId = -1;
-            directionsList.setAdapter(
+            FoddPath.setAdapter(
                     new ArrayAdapter<String>(this,
                             android.R.layout.simple_list_item_1)
             );
             changeMenuOptions(false);
-            setTitle("Faculty App");
+            setTitle("Restaurant");
         }
     }
 
@@ -148,58 +145,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.add_direction:{
                 AlertDialog inputDialog = new AlertDialog.Builder(MainActivity.this).create();
-                View vv = (LinearLayout) getLayoutInflater().inflate(R.layout.input_direction, null);
+                View vv = (LinearLayout) getLayoutInflater().inflate(R.layout.input_food_p, null);
                 inputDialog.setView(vv);
                 inputDialog.setCancelable(true);
 
                 ((Button) vv.findViewById(R.id.add_direction_accept)).setOnClickListener(v->{
 
-                    String newCode = ((EditText) vv.findViewById(R.id.input_direction_code)).getText().toString();
-                    newCode = newCode.trim();
+
                     String newName = ((EditText) vv.findViewById(R.id.input_direction_name)).getText().toString();
                     newName = newName.trim();
-                    String newProfile = ((EditText) vv.findViewById(R.id.input_direction_profile)).getText().toString();
-                    newProfile = newProfile.trim();
 
-                    if(newCode.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Недопустимй код", Toast.LENGTH_SHORT)
-                                .show();
-                        inputDialog.cancel();
-                        return;
-                    }
                     if(newName.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Недопустимое направление", Toast.LENGTH_SHORT)
-                                .show();
-                        inputDialog.cancel();
-                        return;
-                    }
-                    if(newProfile.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Недопустимый профиль", Toast.LENGTH_SHORT)
+                        Toast.makeText(getApplicationContext(), "Недопустимый вид еды", Toast.LENGTH_SHORT)
                                 .show();
                         inputDialog.cancel();
                         return;
                     }
 
-                    Direction direction = new Direction();
-                    direction.name = ((EditText) vv.findViewById(R.id.input_direction_name)).getText().toString();
-                    direction.code = ((EditText) vv.findViewById(R.id.input_direction_code)).getText().toString();
-                    direction.profile = ((EditText) vv.findViewById(R.id.input_direction_profile)).getText().toString();
-                    direction.facultyId = currentFacultyId;
 
-                    dataHandler.addDirection(direction);
+                    FoodPodC foodPodC = new FoodPodC();
+                    foodPodC.name = ((EditText) vv.findViewById(R.id.input_direction_name)).getText().toString();
+                    foodPodC.categoriesId = currentFacultyId;
+
+                    dataHandler.addDirection(foodPodC);
                     sleep(500);
-                    GetDirections getDirections = new GetDirections();
-                    getDirections.execute();
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                apiService.insertFaculty(direction.name);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
+                    GetFoodP getFoodP = new GetFoodP();
+                    getFoodP.execute();
+
                     inputDialog.cancel();
                 });
                 ((Button) vv.findViewById(R.id.add_direction_decline)).setOnClickListener(v->{
@@ -210,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.delete_faculty:{
                 changeMenuOptions(false);
-                setTitle("Faculty App");
-                dataHandler.deleteFaculty(Faculty.findFacultyById(allFaculties, currentFacultyId));
+                setTitle("Restaurant");
+                dataHandler.deleteFaculty(Restaurant.findFacultyById(allRestaurant, currentFacultyId));
                 currentFacultyId = -1;
                 sleep(500);
                 getDatabaseInfo();
@@ -233,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void addOrChangeFaculty(boolean createNew){
         AlertDialog inputDialog = new AlertDialog.Builder(MainActivity.this).create();
-        View vv = (LinearLayout) getLayoutInflater().inflate(R.layout.input_new_faculty_layout, null);
+        View vv = (LinearLayout) getLayoutInflater().inflate(R.layout.input_new_catecoria_layout, null);
         inputDialog.setView(vv);
         inputDialog.setCancelable(true);
         EditText editFacultyName = (EditText) vv.findViewById(R.id.editFacultyName);
@@ -241,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(!createNew){
             accept.setText("Изменить");
-            editFacultyName.setText(Faculty.findFacultyById(allFaculties, currentFacultyId).name);
+            editFacultyName.setText(Restaurant.findFacultyById(allRestaurant, currentFacultyId).name);
         }
         else accept.setText("Добавить");
         accept.setOnClickListener(v->{
@@ -261,13 +233,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             else{
                 setTitle(editFacultyName.getText().toString());
-                Faculty faculty = Faculty.findFacultyById(allFaculties, currentFacultyId);
-                faculty.name = editFacultyName.getText().toString();
-                dataHandler.updateFaculty(faculty);
+                Restaurant restaurant = Restaurant.findFacultyById(allRestaurant, currentFacultyId);
+                restaurant.name = editFacultyName.getText().toString();
+                dataHandler.updateFaculty(restaurant);
             }
             sleep(500);
-            GetFaculties getFaculties = new GetFaculties();
-            getFaculties.execute();
+            GetRestaurant getRestaurant = new GetRestaurant();
+            getRestaurant.execute();
             inputDialog.cancel();
         });
         ((Button) vv.findViewById(R.id.addFacultyDecline)).setOnClickListener(v->{
@@ -293,9 +265,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void updateNavigationMenuValues(){
         navigationView.getMenu().clear();
 
-        if(allFaculties.size() > 0){
-            for(Faculty faculty: allFaculties){
-                navigationView.getMenu().add(Menu.NONE, faculty.id, Menu.NONE, faculty.name);
+        if(allRestaurant.size() > 0){
+            for(Restaurant restaurant : allRestaurant){
+                navigationView.getMenu().add(Menu.NONE, restaurant.id, Menu.NONE, restaurant.name);
             }
         }
         else navigationView.getMenu().add(Menu.NONE, 0, Menu.NONE, "Еще нет факультетов");
@@ -307,9 +279,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         changeMenuOptions(true);
         currentFacultyId = item.getItemId();
-        setTitle(Faculty.findFacultyById(allFaculties, currentFacultyId).name);
+        setTitle(Restaurant.findFacultyById(allRestaurant, currentFacultyId).name);
         getDatabaseInfo();
-        if(allDirections.size() > 0){
+        if(allFoodPodCS.size() > 0){
             searchForFacultyDirections();
             setListViewAdapter();
         }
@@ -331,53 +303,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void searchForFacultyDirections(){
-        currentFacultyDirections = new ArrayList<>();
-        for(Direction direction : allDirections){
-            if(direction.facultyId == currentFacultyId) currentFacultyDirections.add(direction);
+        currentFacultyFoodPodCS = new ArrayList<>();
+        for(FoodPodC foodPodC : allFoodPodCS){
+            if(foodPodC.categoriesId == currentFacultyId) currentFacultyFoodPodCS.add(foodPodC);
         }
     }
 
-    class GetFaculties extends AsyncTask<Void, Void, ArrayList<Faculty>> {
+    class GetRestaurant extends AsyncTask<Void, Void, ArrayList<Restaurant>> {
         @Override
-        protected ArrayList<Faculty> doInBackground(Void... unused) {
-            return (ArrayList<Faculty>) dataHandler.getDB().facultyDao().getAll();
+        protected ArrayList<Restaurant> doInBackground(Void... unused) {
+            return (ArrayList<Restaurant>) dataHandler.getDB().restaurantDao().getAll();
         }
         @Override
-        protected void onPostExecute(ArrayList<Faculty> faculties) {
-            allFaculties = faculties;
-            Toast.makeText(getApplicationContext(), "Факультеты загружены(" + String.valueOf(allFaculties.size()) + ")", Toast.LENGTH_SHORT)
+        protected void onPostExecute(ArrayList<Restaurant> restaurant) {
+            allRestaurant = restaurant;
+            Toast.makeText(getApplicationContext(), "Ресторан загружен(" + String.valueOf(allRestaurant.size()) + ")", Toast.LENGTH_SHORT)
                     .show();
             updateNavigationMenuValues();
         }
     }
 
-    class GetDirections extends AsyncTask<Void, Void, ArrayList<Direction>> {
+    class GetFoodP extends AsyncTask<Void, Void, ArrayList<FoodPodC>> {
         @Override
-        protected ArrayList<Direction> doInBackground(Void... unused) {
-            return (ArrayList<Direction>) dataHandler.getDB().directionDao().getAll();
+        protected ArrayList<FoodPodC> doInBackground(Void... unused) {
+            return (ArrayList<FoodPodC>) dataHandler.getDB().foodPodCDao().getAll();
         }
         @Override
-        protected void onPostExecute(ArrayList<Direction> directionArrayList) {
-            allDirections = directionArrayList;
+        protected void onPostExecute(ArrayList<FoodPodC> foodPodCArrayList) {
+            allFoodPodCS = foodPodCArrayList;
             if(currentFacultyId != -1){
                 searchForFacultyDirections();
                 setListViewAdapter();
                 //((ArrayAdapter) departmentsList.getAdapter()).notifyDataSetChanged();
             }
-            Toast.makeText(getApplicationContext(), "Направления подготовки загружены(" + String.valueOf(allDirections.size()) + ")", Toast.LENGTH_SHORT)
+            Toast.makeText(getApplicationContext(), "Виды блюд загружены(" + String.valueOf(allFoodPodCS.size()) + ")", Toast.LENGTH_SHORT)
                     .show();
         }
     }
 
-    class GetStudents extends AsyncTask<Void, Void, ArrayList<Students>> {
+    class GetFood extends AsyncTask<Void, Void, ArrayList<Food>> {
         @Override
-        protected ArrayList<Students> doInBackground(Void... unused) {
-            return (ArrayList<Students>) dataHandler.getDB().studentDao().getAll();
+        protected ArrayList<Food> doInBackground(Void... unused) {
+            return (ArrayList<Food>) dataHandler.getDB().foodDao().getAll();
         }
         @Override
-        protected void onPostExecute(ArrayList<Students> studentsArrayList) {
-            allStudents = studentsArrayList;
-            Toast.makeText(getApplicationContext(), "Студенты загружены (" + String.valueOf(allStudents.size()) + ")", Toast.LENGTH_SHORT)
+        protected void onPostExecute(ArrayList<Food> foodArrayList) {
+            allFood = foodArrayList;
+            Toast.makeText(getApplicationContext(), "Блюда загружена (" + String.valueOf(allFood.size()) + ")", Toast.LENGTH_SHORT)
                     .show();
         }
     }

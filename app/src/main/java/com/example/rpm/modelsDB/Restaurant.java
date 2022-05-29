@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 import java.util.ArrayList;
 
 @Entity
-public class Faculty {
+public class Restaurant {
     @PrimaryKey(autoGenerate = true) public int id;
 
     @ColumnInfo(name = "name") public String name;
@@ -16,10 +16,10 @@ public class Faculty {
     @Ignore public boolean newObj;
     @Ignore public boolean changed;
 
-    @Ignore public static Faculty findFacultyById(ArrayList<Faculty> searchingList, int facultyId){
-        for(Faculty faculty:searchingList){
-            if(faculty.id == facultyId){
-                return faculty;
+    @Ignore public static Restaurant findFacultyById(ArrayList<Restaurant> searchingList, int facultyId){
+        for(Restaurant restaurant :searchingList){
+            if(restaurant.id == facultyId){
+                return restaurant;
             }
         }
         return null;

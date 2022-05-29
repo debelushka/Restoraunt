@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Имя"
+        android:hint="Названия блюда"
         android:inputType="textPersonName" />
 
     <EditText
@@ -17,16 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Фамилия"
+        android:hint="Вес блюда"
         android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/input_std_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Форма обучения"
-        android:inputType="textPersonName" />
 
     <LinearLayout
         android:layout_width="match_parent"

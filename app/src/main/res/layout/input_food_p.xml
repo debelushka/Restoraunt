@@ -5,31 +5,11 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/input_direction_code"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Введите код"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:textColorHint="#757575" />
-
-    <EditText
         android:id="@+id/input_direction_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Введите направление подготовки"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        android:textColorHint="#757575" />
-
-    <EditText
-        android:id="@+id/input_direction_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Введите профиль"
+        android:hint="Введите название вида блюда"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:textColorHint="#757575" />

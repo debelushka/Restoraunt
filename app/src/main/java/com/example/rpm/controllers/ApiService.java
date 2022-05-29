@@ -16,18 +16,20 @@ import okhttp3.Response;
 public class ApiService {
     public CountForm countform;
     //private ArrayList<Person> allPerson = new ArrayList<>();
-    public CountForm selectCount(String direction) throws Exception {
+    public CountForm selectCount(String nameF) throws Exception {
         final OkHttpClient client = new OkHttpClient();
 
         RequestBody formBody = new FormBody.Builder()
-                .add("title", direction)
+                .add("name", nameF)
                 .build();
 
         Request request = new Request.Builder()
-                .url("http://94.103.188.48/FacultyApp/select_count.php")
+                .url("http://194.87.248.41/Restaurant/food.php")
                 .post(formBody)
                 .build();
         Response response = client.newCall(request).execute();
+
+        Log.d("MyLog",""+response);
         if(response.isSuccessful()){
             System.out.println(response.code());
             Gson g = new Gson();
@@ -37,48 +39,13 @@ public class ApiService {
                 countform = g.fromJson(json.getJSONObject(i).toString(), CountForm.class);
 
                 //allPerson.add(person);
-                Log.d("MyLogi", countform.toString());
+                Log.d("MyLog", countform.toString());
             }
-
         }
         return countform;
 
 
     }
 
-    public void insertCount(String countBudget, String countDogovor, String title) throws Exception {
-        final OkHttpClient client = new OkHttpClient();
-        Log.d("MyLog",""+countBudget);
-        RequestBody formBody = new FormBody.Builder()
-                .add("countBudget", countBudget)
-                .add("countDogovor", countDogovor)
-                .add("title", title)
-                .build();
 
-        Request request = new Request.Builder()
-                .url("http://94.103.188.48/FacultyApp/insert_stud.php")
-                .post(formBody)
-                .build();
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful()){
-            System.out.println(response.code());
-        }
-    }
-
-    public void insertFaculty(String title) throws Exception {
-        final OkHttpClient client = new OkHttpClient();
-        Log.d("MyLog",""+title);
-        RequestBody formBody = new FormBody.Builder()
-                .add("title", title)
-                .build();
-
-        Request request = new Request.Builder()
-                .url("http://94.103.188.48/FacultyApp/insert_faculty.php")
-                .post(formBody)
-                .build();
-        Response response = client.newCall(request).execute();
-        if(response.isSuccessful()){
-            System.out.println(response.code());
-        }
-    }
 }
