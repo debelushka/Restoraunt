@@ -22,6 +22,8 @@ public class Food {
     @ColumnInfo(name = "width")
     public String width;
 
+    public String price;
+    public String inStocks;
 
     public int podCid;
 }

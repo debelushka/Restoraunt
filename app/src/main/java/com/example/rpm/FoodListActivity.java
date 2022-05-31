@@ -38,10 +38,10 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
 
     private int foodPod;
     private String foodPodC;
-
+    private FoodListAdapter empAdapter;
     private ArrayList<Food> foodList = new ArrayList<>();
     private ApiService apiService = new ApiService();
-    private CountForm countform = new CountForm();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +58,7 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
         }
     }
 
-    private void sleep(int millis){
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private void initializeValues(){
         listView = findViewById(R.id.food_list_view);
@@ -81,7 +75,9 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
         getFood.execute();
     }
     private void setListView(){
-        FoodListAdapter empAdapter = new FoodListAdapter(this, R.layout.restoran_element_listview, foodList);
+
+
+        empAdapter = new FoodListAdapter(this, R.layout.restoran_element_listview , foodList);
         listView.setAdapter(empAdapter);
     }
 
@@ -145,40 +141,10 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
 
         return super.onOptionsItemSelected(item);
     }
-    private void showDetails(Food food){
-        AlertDialog inputDialog1 = new AlertDialog.Builder(FoodListActivity.this).create();
-        View vv = (LinearLayout) getLayoutInflater().inflate(R.layout.details,null);
-
-        inputDialog1.setView(vv);
-        inputDialog1.setCancelable(true);
-
-        TextView price = (TextView) vv.findViewById(R.id.textView2);
-        TextView inStock = (TextView) vv.findViewById(R.id.textView4);
-
-        Button button = (Button) vv.findViewById(R.id.imageButton21);
-        button.setOnClickListener(v->{
-            inputDialog1.cancel();
-
-        });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    countform = apiService.selectCount(food.name);
+    private void showDetails(Food food,boolean show){
 
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        sleep(2000);
-        Log.d("MyLog",""+countform);
-        price.setText(String.valueOf(countform.price));
-        if(countform.inStock==1)
-        inStock.setText("Доступен");
-        else inStock.setText("Недоступен");
-        inputDialog1.show();
+        dataHandler.updateFood(food);
     };
 
     private void createOrChangeFood(boolean createNew, Food food){
@@ -212,11 +178,7 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
 
                 newFood.podCid = foodPod;
                 dataHandler.addFood(newFood);
-                int price = countform.price;
-                int inStock = countform.inStock;
 
-                String priceString = String.valueOf(price);
-                String inStockString = String.valueOf(inStock);
 
 
             }
@@ -277,8 +239,8 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
         createOrChangeFood(false, foodList.get(position));
     }
     @Override
-    public void showDet(int position) {
-        showDetails(foodList.get(position));
+    public void showDet(int position,boolean show) {
+        showDetails(foodList.get(position),show);
     }
 
     class GetFood extends AsyncTask<Void, Void, ArrayList<Food>> {
@@ -302,5 +264,6 @@ public class FoodListActivity extends AppCompatActivity implements FoodListAdapt
             setListView();
 
         }
+
     }
 }

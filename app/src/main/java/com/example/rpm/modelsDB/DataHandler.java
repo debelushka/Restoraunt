@@ -24,7 +24,7 @@ public class DataHandler {
 
 
     //Cate
-    public void addFaculty(String name){
+    public void addCategories(String name){
         Restaurant restaurant = new Restaurant();
         restaurant.name = name;
         Runnable runnable = new Runnable() {
@@ -36,7 +36,7 @@ public class DataHandler {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void addFaculty(int id, String name){
+    public void addCategories(int id, String name){
         Restaurant restaurant = new Restaurant();
         restaurant.id = id;
         restaurant.name = name;
@@ -49,7 +49,7 @@ public class DataHandler {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void deleteFaculty(Restaurant restaurant){
+    public void deleteCategories(Restaurant restaurant){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -59,19 +59,8 @@ public class DataHandler {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void updateFaculty(int id, String newName){
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Restaurant restaurant = facultyDao.getOneById(id);
-                restaurant.name = newName;
-                facultyDao.update(restaurant);
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-    public  void updateFaculty(Restaurant restaurant){
+
+    public  void updateCategories(Restaurant restaurant){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -95,35 +84,7 @@ public class DataHandler {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    public void addDirection(int id, String name, int facultyId){
-        FoodPodC dir = new FoodPodC();
-        dir.id = id;
-        dir.name = name;
-        dir.categoriesId = facultyId;
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                foodPodCDao.insertAll(dir);
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-    public void addDirection(String name, int facultyId){
-        FoodPodC dir = new FoodPodC();
-        dir.name = name;
-        dir.categoriesId = facultyId;
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                List<FoodPodC> direcs = foodPodCDao.getAll();
-                dir.id = direcs.size();
-                foodPodCDao.insertAll(dir);
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
+
     public void deleteDirection(int id){
         Runnable runnable = new Runnable() {
             @Override

@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.delete_faculty:{
                 changeMenuOptions(false);
                 setTitle("Restaurant");
-                dataHandler.deleteFaculty(Restaurant.findFacultyById(allRestaurant, currentFacultyId));
+                dataHandler.deleteCategories(Restaurant.findFacultyById(allRestaurant, currentFacultyId));
                 currentFacultyId = -1;
                 sleep(500);
                 getDatabaseInfo();
@@ -228,14 +228,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             if(createNew){
-                dataHandler.addFaculty(editFacultyName.getText().toString());
+                dataHandler.addCategories(editFacultyName.getText().toString());
 
             }
             else{
                 setTitle(editFacultyName.getText().toString());
                 Restaurant restaurant = Restaurant.findFacultyById(allRestaurant, currentFacultyId);
                 restaurant.name = editFacultyName.getText().toString();
-                dataHandler.updateFaculty(restaurant);
+                dataHandler.updateCategories(restaurant);
             }
             sleep(500);
             GetRestaurant getRestaurant = new GetRestaurant();
